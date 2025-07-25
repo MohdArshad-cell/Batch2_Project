@@ -1,4 +1,4 @@
-# 📘 Batch2_Project - Java Backend Note-Taking App
+# 📘 Java Backend Note-Taking App
 
 A simple web-based **Note-Taking Application** developed using **JSP**, **Servlets**, and **JDBC**. This project demonstrates core Java backend concepts such as CRUD operations, session handling, and database integration using **MySQL**.
 
