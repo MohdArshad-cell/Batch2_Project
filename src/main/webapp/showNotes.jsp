@@ -5,59 +5,120 @@
 <%
 UserDetails user1 = (UserDetails) session.getAttribute("userD");
 if (user1 == null) {
-	response.sendRedirect("login.jsp");
-	session.setAttribute("login-error", "Please login First.......");
+    session.setAttribute("login-error", "Please login First.......");
+    response.sendRedirect("login.jsp");
+    return;
 }
 %>
 
+<%@ include file="all_components/All_CDN.jsp" %>
+<%@ include file="all_components/navbar.jsp" %>
 
-<%@ include file="all_components/All_CDN.jsp"%>
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
-<%@ include file="all_components/navbar.jsp"%>
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: #f3f6fa;
+        color: #333;
+    }
 
-<div class="container">
-	<h1 class="text-center">Show Notes</h1>
+    .note-container {
+        padding: 60px 20px;
+    }
 
-	<%
-	if (user1 != null) {
-		PostDAO ob = new PostDAO(DBconnect.getConn());
-		List<Post> post = ob.getData(user1.getId());
-		int count = 0;
-		for (Post po : post) {
-			if (count % 3 == 0) {
-	%>
-	<div class="row">
-		<%
-		}
-		%>
+    .note-title {
+        text-align: center;
+        font-size: 2.5rem;
+        font-weight: 600;
+        margin-bottom: 40px;
+    }
 
-		<div class="col-md-4 mb-5">
-			<div class="card mt-3 w-100 h-100">
-				<div class="card-body p-4">
-					<h4 class="card-title">
-						Title:<%=po.getTitle()%>
-					</h4>
-					<p>
-						<b>Content:<%=po.getContent()%></b>
-					</p>
-					<p>
-						<b>Upload By:<%=user1.getName()%></b>
-					</p>
-					<p>
-						<b>Upload Date:<%=po.getPdate()%></b>
-					</p>
-				</div>
-				<div class="">
-					<a href="DeletePostServlet?note_id=<%= po.getId() %>">Delete</a> <a
-						href="Edit.jsp?note_id=<%=po.getId()%>">Edit</a>
-				</div>
-			</div>
+    .note-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        background-color: #ffffff;
+    }
 
-		</div>
-	</div>
-	<%
-	}
-	}
-	%>
+    .note-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .note-card .card-body {
+        padding: 25px;
+    }
+
+    .note-card h4 {
+        font-weight: 600;
+        font-size: 1.4rem;
+    }
+
+    .note-meta {
+        font-size: 0.95rem;
+        color: #666;
+    }
+
+    .note-actions {
+        padding: 15px 25px;
+        border-top: 1px solid #f0f0f0;
+        display: flex;
+        justify-content: space-between;
+        background-color: #fafafa;
+        border-radius: 0 0 15px 15px;
+    }
+
+    .note-actions a {
+        text-decoration: none;
+        font-weight: 500;
+        color: #2563eb;
+        transition: color 0.2s ease;
+    }
+
+    .note-actions a:hover {
+        color: #1d4ed8;
+    }
+
+    @media (max-width: 768px) {
+        .note-card {
+            margin-bottom: 20px;
+        }
+    }
+</style>
+
+<div class="container note-container">
+    <h1 class="note-title">Your Notes</h1>
+
+    <div class="row">
+        <%
+        if (user1 != null) {
+            PostDAO ob = new PostDAO(DBconnect.getConn());
+            List<Post> post = ob.getData(user1.getId());
+
+            for (Post po : post) {
+        %>
+            <div class="col-md-4 col-sm-6 mb-4">
+                <div class="card note-card h-100">
+                    <div class="card-body">
+                        <h4 class="card-title"><%= po.getTitle() %></h4>
+                        <p><%= po.getContent() %></p>
+                        <p class="note-meta"><strong>Uploaded By:</strong> <%= user1.getName() %></p>
+                        <p class="note-meta"><strong>Date:</strong> <%= po.getPdate() %></p>
+                    </div>
+                    <div class="note-actions">
+                        <a href="Edit.jsp?note_id=<%= po.getId() %>"><i class="fas fa-edit"></i> Edit</a>
+                        <a href="DeletePostServlet?note_id=<%= po.getId() %>" onclick="return confirm('Are you sure you want to delete this note?');"><i class="fas fa-trash-alt"></i> Delete</a>
+                    </div>
+                </div>
+            </div>
+        <%
+            }
+        }
+        %>
+    </div>
 </div>
-<%@ include file="all_components/footer.jsp"%>
+
+<%@ include file="all_components/footer.jsp" %>
